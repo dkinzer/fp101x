@@ -49,5 +49,31 @@ safetail8 = \ xs ->
     (_ : xs) -> xs
 
 -- Exercise 2.
-False || False = False
-_ || _ = True
+--False ||| False = False
+--_ ||| _ = True
+
+--False ||| b = b
+--True ||| _ = True
+
+--b ||| c
+--  | b == c = True
+--  | otherwise = False
+
+--b ||| c
+-- | b == c = b
+-- | otherwise = False
+
+--b ||| False = b
+--_ ||| True = True
+
+-- b ||| c
+--  | b == c = c
+--  | otherwise = True
+
+--b ||| True = b
+--_ ||| True = True
+
+False ||| False = False
+False ||| True = True
+True ||| False = True
+True ||| True = True
