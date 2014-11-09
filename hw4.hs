@@ -33,6 +33,7 @@ shift n c
 unshift :: Int -> Char -> Char
 unshift n c
   | isLower c = int2let ((let2int c - n) `mod` 26)
+  | isUpper c = toUpper (shift n (toLower c))
   | otherwise = c
 
 encode :: Int -> String -> String
