@@ -41,3 +41,22 @@ encode n xs = [shift n x | x <- xs]
 
 decode :: Int -> String -> String
 decode n xs = [unshift n x | x <- xs]
+
+-- Exercise 13
+divides :: Int -> Int -> Bool
+divides x y = x `mod` y == 0
+
+divisors :: Int -> [Int]
+divisors x = [d | d <- [1 .. x], x `divides` d]
+
+
+e13answer = "\
+  \Wow,\
+  \\
+  \This one kind of stumped me at first, until I realized that I could\
+  \easily encode an upper case character by first encoding the lowercase\
+  \form and upper casing the result. Or:\
+  \\
+  \Upper -> lower -> encode -> Upper.\
+  \\
+  \For good measure I added a decoder that does the opposite of encode."
