@@ -19,7 +19,6 @@ toDigits' (n, i) = toDigits' (n', i + 1) ++ [d]
     n' = n - x
     d  = x `div` 10^(i - 1)
 
-
 toDigits :: Integer -> [Integer]
 toDigits n = toDigits' (n, 1)
 
@@ -37,9 +36,7 @@ toDigitsRev n = reverse $ toDigits n
 doubleSecond :: [Integer] -> [Integer]
 doubleSecond [] = []
 doubleSecond [x] = [x]
-doubleSecond (first:xs) = [first] ++ [secondDoubled] ++ doubleSecond rest
-  where (y:rest) = xs
-        secondDoubled = 2 * y
+doubleSecond (first:second:rest) = [first] ++ [2 * second] ++ doubleSecond rest
 
 -- ===================================
 -- Ex. 3
