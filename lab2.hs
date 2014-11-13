@@ -10,8 +10,18 @@ module Lab2 where
 
 eval xs = foldl (\x y -> y + (10 * x)) 0 xs
 
+toDigits' :: (Integer, Integer) -> [Integer]
+toDigits' (0, 1) = [0]
+toDigits' (0, _) = []
+toDigits' (n, i) = toDigits' (n', i + 1) ++ [d]
+  where
+    x = mod n (10^i)
+    n' = n - x
+    d  = x `div` 10^(i - 1)
+
+
 toDigits :: Integer -> [Integer]
-toDigits n = [read [x] | x <- show n]
+toDigits n = toDigits' (n, 1)
 
 -- ===================================
 -- Ex. 1
