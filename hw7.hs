@@ -23,3 +23,10 @@ int
   = (do char '-'
         n <- HW7.nat
         return (-n)) +++ HW7.nat
+
+
+-- e7
+comment :: Parser ()
+comment = do string "--"
+             many (sat (/= 'n'))
+             return ()
