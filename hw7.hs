@@ -30,3 +30,10 @@ comment :: Parser ()
 comment = do string "--"
              many (sat (/= 'n'))
              return ()
+
+-- e8
+expr :: Parser Int
+expr = do n <- natural
+          ns <- many (do symbol "-"
+                         natural)
+          return (foldl (-) n ns)

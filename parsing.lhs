@@ -101,8 +101,6 @@ Derived primitives
 > comment                       :: Parser ()
 > comment                       = undefined
 >
-> expr                          :: Parser Int
-> expr                          = undefined
 
 Ignoring spacing
 ----------------
