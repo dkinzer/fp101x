@@ -2,7 +2,7 @@ module HW7 where
 
 import Parsing 
 
--- Testing HW7 e4.
+-- e4.
 pListDigits :: Parser String
 pListDigits = do char '['
                  d <- digit
@@ -10,3 +10,16 @@ pListDigits = do char '['
                                 digit)
                  char ']'
                  return (d:ds)
+
+
+-- e6
+nat :: Parser Int
+nat
+  = do xs <- many1 digit
+       return (read xs)
+
+int :: Parser Int
+int
+  = (do char '-'
+        n <- HW7.nat
+        return (-n)) +++ HW7.nat
