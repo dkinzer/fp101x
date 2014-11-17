@@ -1,10 +1,14 @@
 module HW8 where
 
 e0 :: IO String
-e0 = do return "Hello World"
+e0 = return "Hello World"
 
 e0' :: String -> String
 e0' s = s
+
+e0'' :: IO Char
+e0'' = do x <- e0
+          return (head x)
 
 -- e1
 putStr' :: String -> IO ()
@@ -12,9 +16,9 @@ putStr' [] = return ()
 putStr' (x:xs) = putChar x >> putStr' xs
 
 -- e2
-putStrLn0 :: String -> IO ()
-putStrLn0 [] = putChar '\n'
-putStrLn0 xs = putStr' xs >> putStrLn0 ""
+putStrLn' :: String -> IO ()
+putStrLn' [] = putChar '\n'
+putStrLn' xs = putStr' xs >> putStrLn' ""
 
 putStrLn1 :: String -> IO ()
 putStrLn1 [] = putChar '\n'
@@ -37,3 +41,8 @@ get xs
        case x of
          '\n' -> return xs
          _ -> get (xs ++ [x])
+
+-- e4
+interact' :: (String -> String) -> IO ()
+interact' f = do input <- getLine'
+                 putStrLn' (f input)
