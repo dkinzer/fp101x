@@ -63,3 +63,30 @@ sequence_4 (m:ms) = m >>= \_ -> sequence_4 ms
 
 sequence_6 :: Monad m => [m a] -> m ()
 sequence_6 ms = foldr (>>) (return ()) ms
+
+-- e6
+e6_seq = [putStrLn' "1", putStrLn' "2", putStrLn' "3"]
+
+sequence'_0 :: Monad m => [m a] -> m [a]
+sequence'_0 [] = return []
+sequence'_0 (m : ms)
+  = m >>=
+      \ a ->
+        do as <- sequence'_0 ms
+           return (a : as)
+
+{-- Fails with:
+ - Couldn't match expected type `[a]' with actual type `()
+ - In the first argument of `return', namely `()'         
+ - In the second argument of `foldr', namely `(return ())'
+ - In the expression: foldr func (return ()) ms           
+ -
+sequence'_1 :: Monad m => [m a] -> m [a]
+sequence'_1 ms = foldr func (return ()) ms
+  where
+    func :: (Monad m) => m a -> m [a] -> m [a]
+    func m acc
+      = do x <- m
+           xs <- acc
+           return (x : xs)
+--}
