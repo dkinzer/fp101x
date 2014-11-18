@@ -38,6 +38,14 @@ doubleSecond [] = []
 doubleSecond [x] = [x]
 doubleSecond (first:second:rest) = [first] ++ [2 * second] ++ doubleSecond rest
 
+doubleXth n xs
+  | length (take n xs) < n = xs
+  | otherwise = take (n - 1) xs  ++ [2 * xth] ++ doubleXth n rest
+                where xth = head (drop (n - 1) xs)
+                      rest = drop n xs
+
+doubleSeventh = (doubleXth 7)
+
 -- ===================================
 -- Ex. 3
 -- ===================================
