@@ -46,3 +46,20 @@ get xs
 interact' :: (String -> String) -> IO ()
 interact' f = do input <- getLine'
                  putStrLn' (f input)
+-- e5
+e5_seq = [putStrLn' "1", putStrLn' "2", putStrLn' "3"]
+
+sequence_1 :: Monad m => [m a] -> m ()
+sequence_1 [] = return ()
+sequence_1 (m:ms) = (foldl (>>) m ms) >> return ()
+
+sequence_3 :: Monad m => [m a] -> m ()
+sequence_3 [] = return ()
+sequence_3 (m:ms) = m >> sequence_3 ms
+
+sequence_4 :: Monad m => [m a] -> m ()
+sequence_4 [] = return ()
+sequence_4 (m:ms) = m >>= \_ -> sequence_4 ms
+
+sequence_6 :: Monad m => [m a] -> m ()
+sequence_6 ms = foldr (>>) (return ()) ms
