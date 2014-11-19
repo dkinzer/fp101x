@@ -77,10 +77,9 @@ sequence'_0 (m : ms)
 
 {-- Fails with:
  - Couldn't match expected type `[a]' with actual type `()
- - In the first argument of `return', namely `()'         
+ - In the first argument of `return', namely `()'
  - In the second argument of `foldr', namely `(return ())'
- - In the expression: foldr func (return ()) ms           
- -
+ - In the expression: foldr func (return ()) ms
 sequence'_1 :: Monad m => [m a] -> m [a]
 sequence'_1 ms = foldr func (return ()) ms
   where
@@ -90,3 +89,56 @@ sequence'_1 ms = foldr func (return ()) ms
            xs <- acc
            return (x : xs)
 --}
+
+{-- Fails with:
+ - Could not deduce (m1 ~ [])
+ - from the context (Monad m)
+sequence'_2 :: Monad m => [m a] -> m [a]
+sequence'_2 ms = foldr func (return []) ms
+  where
+    func :: (Monad m) => m a -> m [a] -> m [a]
+    func m acc = m : acc
+ --}
+
+{-- Fails with: parse error on input ‘<-’
+sequence'_3 :: Monad m => [m a] -> m [a]
+sequence'_3 [] = return []
+sequence'_3 (m : ms) = return (a : as)
+  where
+    a <- m
+    as <- sequence'_3 ms
+--}
+sequence'_4 :: Monad m => [m a] -> m [a]
+sequence'_4 ms = foldr func (return []) ms
+  where
+    func :: (Monad m) => m a -> m [a] -> m [a]
+    func m acc
+      = do x <- m
+           xs <- acc
+           return (x : xs)
+
+{-- Fails with: Could not deduce (a ~ [a])
+sequence'_5 :: Monad m => [m a] -> m [a]
+sequence'_5 [] = return []
+sequence'_5 (m : ms)
+  = m >>
+      \ a ->
+        do as <- sequence'_5 ms
+           return (a : as)
+--}
+
+{-- Fails with: parse error on input <-
+sequence'_6 :: Monad m => [m a] -> m [a]
+sequence'_6 [] = return []
+sequence'_6 (m : ms) = m >>= \a ->
+  as <- sequence'_6 ms
+  return (a : as)
+--}
+
+sequence'_7 :: Monad m => [m a] -> m [a]
+sequence'_7 [] = return []
+sequence'_7 (m : ms)
+  = do a <- mg
+       as <- sequence'_7 ms
+       return (a : as)
+
