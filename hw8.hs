@@ -142,3 +142,14 @@ sequence'_7 (m : ms)
        as <- sequence'_7 ms
        return (a : as)
 
+sequence' :: Monad m => [m a] -> m [a]
+sequence' [] = return []
+sequence' (m : ms)
+  = do a <- m
+       as <- sequence' ms
+       return (a : as)
+
+-- e7
+e7_seq = [putStrLn' "1", putStrLn' "2", putStrLn' "3"]
+mapM'_0 :: Monad m => (a -> m b) -> [a] -> m [b]
+mapM'_0 f as = sequence' (map f as)
