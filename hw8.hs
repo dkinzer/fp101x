@@ -138,7 +138,7 @@ sequence'_6 (m : ms) = m >>= \a ->
 sequence'_7 :: Monad m => [m a] -> m [a]
 sequence'_7 [] = return []
 sequence'_7 (m : ms)
-  = do a <- mg
+  = do a <- m
        as <- sequence'_7 ms
        return (a : as)
 
