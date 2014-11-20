@@ -64,6 +64,10 @@ sequence_4 (m:ms) = m >>= \_ -> sequence_4 ms
 sequence_6 :: Monad m => [m a] -> m ()
 sequence_6 ms = foldr (>>) (return ()) ms
 
+sequence_' :: Monad m => [m a] -> m ()
+sequence_' [] = return ()
+sequence_' (m:ms) = (foldl (>>) m ms) >> return ()
+
 -- e6
 e6_seq = [putStrLn' "1", putStrLn' "2", putStrLn' "3"]
 
@@ -150,6 +154,78 @@ sequence' (m : ms)
        return (a : as)
 
 -- e7
-e7_seq = [putStrLn' "1", putStrLn' "2", putStrLn' "3"]
+e7_seq = ["1", "2", "3"]
 mapM'_0 :: Monad m => (a -> m b) -> [a] -> m [b]
 mapM'_0 f as = sequence' (map f as)
+
+mapM'_1 :: Monad m => (a -> m b) -> [a] -> m [b]
+mapM'_1 f [] = return []
+mapM'_1 f (a : as)
+  = f a >>= \b -> mapM'_1  f as >>= \bs -> return (b : bs)
+
+
+{-- Fails with:
+Couldn't match type ‘()’ with ‘[b]’
+Expected type: m [b]
+Actual type: m ()
+
+mapM'_2 :: Monad m => (a -> m b) -> [a] -> m [b]
+mapM'_2 f as = sequence_' (map f as)
+--}
+
+
+{-- Fails with:
+Could not deduce (b ~ m0 [a0])
+from the context (Monad m)
+bound by the type signature for
+
+mapM'_3 :: Monad m => (a -> m b) -> [a] -> m [b]
+mapM'_3 :: Monad m => (a -> m b) -> [a] -> m [b]
+mapM'_3 f [] = return []
+mapM'_3 f (a : as)
+  = f a >> \b -> mapM'_3  f as >> \bs -> return (b : bs)
+--}
+
+{-- Fails with: parse error on input ‘->’.
+mapM'_4 :: Monad m => (a -> m b) -> [a] -> m [b]
+mapM'_4 f [] = return []
+mapM'_4 f (a : as) =
+  do
+    f a -> b
+    mapM'_4  f as -> bs
+    return (b : bs)
+--}
+
+mapM'_5 :: Monad m => (a -> m b) -> [a] -> m [b]
+mapM'_5 f [] = return []
+mapM'_5 f (a : as) =
+  do
+    b <- f a
+    bs <- mapM'_5  f as
+    return (b : bs)
+
+mapM'_6 :: Monad m => (a -> m b) -> [a] -> m [b]
+mapM'_6 f [] = return []
+mapM'_6 f (a : as) =
+  f a >>=
+    \b ->
+      do bs <- mapM'_6  f as
+         return (b : bs)
+
+mapM'_7 :: Monad m => (a -> m b) -> [a] -> m [b]
+mapM'_7 f [] = return []
+mapM'_7 f (a : as) =
+  f a >>=
+    \b ->
+      do bs <- mapM'_7  f as
+         return (bs ++ [b])
+
+-- e8
+-- Tested with: filterM' (\x -> return (even x)) [1 .. 10]
+filterM' :: Monad m => (a -> m Bool) -> [a] -> m [a]
+filterM' _ [] = return []
+filterM' p (x : xs)
+  = do flag <- p x
+       ys <- filterM' p xs
+       if flag then return (x : ys) else return ys
+
