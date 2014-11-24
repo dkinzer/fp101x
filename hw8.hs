@@ -229,3 +229,20 @@ filterM' p (x : xs)
        ys <- filterM' p xs
        if flag then return (x : ys) else return ys
 
+foldr' :: (a -> b -> b) -> b -> [a] -> b
+foldr' _ v [] = v
+foldr' f v (x : xs) = f x (foldr' f v xs)
+
+foldl' :: (b -> a -> b) -> b -> [a] -> b
+foldl' _ v [] = v
+foldl' f v (x : xs) = foldl' f (f v x) xs
+
+-- e9
+foldLeftM :: Monad m => (a -> b -> m a) -> a -> [b] -> m a
+foldLeftM _ i [] = return i
+foldLeftM f i (x : xs) = f i x >>= \a -> foldLeftM f a xs
+
+-- e10
+foldRightM :: Monad m => (a -> b -> m b) -> b -> [a] -> m b
+foldRightM _ v [] = return v
+foldRightM f v (x : xs) = (foldRightM f v xs) >>= \z -> f x z
