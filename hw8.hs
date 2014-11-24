@@ -131,13 +131,13 @@ sequence'_5 (m : ms)
            return (a : as)
 --}
 
-{-- Fails with: parse error on input <-
+{- Fails with: parse error on input <-
 sequence'_6 :: Monad m => [m a] -> m [a]
 sequence'_6 [] = return []
 sequence'_6 (m : ms) = m >>= \a ->
   as <- sequence'_6 ms
   return (a : as)
---}
+-}
 
 sequence'_7 :: Monad m => [m a] -> m [a]
 sequence'_7 [] = return []
@@ -164,17 +164,17 @@ mapM'_1 f (a : as)
   = f a >>= \b -> mapM'_1  f as >>= \bs -> return (b : bs)
 
 
-{-- Fails with:
+{- Fails with:
 Couldn't match type ‘()’ with ‘[b]’
 Expected type: m [b]
 Actual type: m ()
 
 mapM'_2 :: Monad m => (a -> m b) -> [a] -> m [b]
 mapM'_2 f as = sequence_' (map f as)
---}
+-}
 
 
-{-- Fails with:
+{- Fails with:
 Could not deduce (b ~ m0 [a0])
 from the context (Monad m)
 bound by the type signature for
@@ -184,9 +184,9 @@ mapM'_3 :: Monad m => (a -> m b) -> [a] -> m [b]
 mapM'_3 f [] = return []
 mapM'_3 f (a : as)
   = f a >> \b -> mapM'_3  f as >> \bs -> return (b : bs)
---}
+-}
 
-{-- Fails with: parse error on input ‘->’.
+{- Fails with: parse error on input ‘->’.
 mapM'_4 :: Monad m => (a -> m b) -> [a] -> m [b]
 mapM'_4 f [] = return []
 mapM'_4 f (a : as) =
@@ -194,7 +194,7 @@ mapM'_4 f (a : as) =
     f a -> b
     mapM'_4  f as -> bs
     return (b : bs)
---}
+-}
 
 mapM'_5 :: Monad m => (a -> m b) -> [a] -> m [b]
 mapM'_5 f [] = return []
@@ -246,3 +246,38 @@ foldLeftM f i (x : xs) = f i x >>= \a -> foldLeftM f a xs
 foldRightM :: Monad m => (a -> b -> m b) -> b -> [a] -> m b
 foldRightM _ v [] = return v
 foldRightM f v (x : xs) = (foldRightM f v xs) >>= \z -> f x z
+
+-- e11
+liftM0 :: Monad m => (a -> b) -> m a -> m b
+liftM0 f m
+  = do x <- m
+       return (f x)
+
+{- Fails with: Could not deduce (b ~ m b)
+liftM1 :: Monad m => (a -> b) -> m a -> m b
+liftM1 f m = m >>= \a -> f a
+-}
+
+liftM2 :: Monad m => (a -> b) -> m a -> m b
+liftM2 f m = m >>= \a -> return (f a)
+
+{- Fails with: Could not deduce (a ~ m a)
+liftM3 :: Monad m => (a -> b) -> m a -> m b
+liftM3 f m = return (f m)
+-}
+
+liftM4 :: Monad m => (a -> b) -> m a -> m b
+liftM4 f m = m >>= \a -> m >>= \b -> return (f a)
+
+liftM5 :: Monad m => (a -> b) -> m a -> m b
+liftM5 f m = m >>= \a -> m >>= \b -> return (f b)
+
+{- Fails with: Could not deduce (a ~ m a)
+liftM6 :: Monad m => (a -> b) -> m a -> m b
+liftM6 f m = mapM f [m]
+-}
+
+{- Fails with: Could not deduce (b ~ m0 b)
+liftM7 :: Monad m => (a -> b) -> m a -> m b
+liftM7 f m = m >> \a -> return (f a)
+-}
