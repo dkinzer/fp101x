@@ -67,3 +67,80 @@ dec2int = foldl (\x y -> 10 * x + y) 0
 compose = foldr (.) id
 
 -- e9
+curry' :: ((a, b) -> c) -> a -> b -> c
+curry' f = \x y -> f (x, y)
+
+-- e10
+uncurry' :: (a -> b -> c) -> (a, b) -> c
+uncurry' f = \(x, y) -> f x y
+
+-- e11
+unfold' :: (b -> Bool) -> (b -> a) -> (b -> b) -> b -> [a]
+unfold' p h t x
+  | p x = []
+  | otherwise = h x : unfold' p h t (t x)
+
+chop8 :: [Integer] -> [[Integer]]
+chop8 [] = []
+chop8 bits = take 8 bits : chop8 (drop 8 bits)
+
+chop8' :: [Integer] -> [[Integer]]
+chop8'  = unfold' null (take 8) (drop 8)
+
+-- e12
+map'' :: (a -> b) -> [a] -> [b]
+map'' f = unfold' null (f . head) tail
+
+-- e13
+iterate' :: (a -> a) -> a -> [a]
+iterate' f = unfold' (const False) id f
+
+-- e14
+e14 = ((* 2) . ((3 +) . (/ 4))) 5 == (((* 2) . (3 +)) . (/ 4)) 5
+
+-- e17
+e17 = map (/ 2) (reverse [1..10]) == reverse (map (/ 2) [1..10])
+
+-- e18
+e18 = reverse [1..10] == reverse [5..10] ++ reverse [1..4]
+
+-- e19
+e19 = length (take 10 [1.. ]) == 10
+
+-- e20
+-- sum :: Num a => [a] -> a
+-- sum is not a higher order function.
+
+-- e21
+-- map :: (a -> b) -> [a] -> [b]
+-- map is not overloaded.
+
+-- e22
+-- foldr :: (a -> b -> b) -> b -> [a] -> b
+-- foldr is not overloaded.
+
+-- e23
+-- take :: Int -> [a] -> [a]
+-- take is polymorphic.
+
+-- e24
+-- (\x -> x > 3) :: (Ord a, Num a) => a -> Bool
+-- The function is overloaded.
+
+-- e25
+e25 = take 4 (iterate (+1) 1) == [1..4]
+
+-- e26
+e26 = takeWhile even [2, 4, 5, 6, 7, 8] == [2,4]
+
+-- e27
+e27 = zip [1, 2] ['a', 'b', 'c'] == [(1,'a'),(2,'b')]
+
+-- e28
+e28 = foldr (-) 0 [1, 2, 3, 4] == -2
+
+-- e29
+e29 = filter even (map (+1) [1..5]) == [2, 4, 6]
+
+-- e30
+e30 = [(* 2) x | x <- [1..10], even ((* 2 ) x)] == filter even (map (* 2) [1..10])
