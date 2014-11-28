@@ -115,3 +115,10 @@ add7 :: Nat -> Nat -> Nat
 add7 n (Succ m) = Succ (add7 m n)
 add7 n Zero = n
 
+
+-- e3
+mult m Zero = Zero
+mult m (Succ n) = add0 m (mult m n)
+e3 = natToInteger0 (mult one three) == natToInteger0 one * natToInteger0 three
+
+
