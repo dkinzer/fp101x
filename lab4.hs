@@ -62,4 +62,51 @@ e6 = 1 == euclid (1, 0)
 -- ===================================
 
 funkyMap :: (a -> b) -> (a -> b) -> [a] -> [b]
-funkyMap f g xs = undefined
+funkyMap _ _ [] = []
+funkyMap f _ [a] = [f a]
+funkyMap f g (a : b : xs) = f a : g b : funkyMap f g xs
+
+-- e7
+funkyMap_test = funkyMap (+10) (+100) [1, 2, 3, 4, 5] == [(+10) 1, (+100) 2, (+10) 3, (+100) 4, (+10) 5]
+e7_a = (sum $ funkyMap (+10) (+100) ys) == 112319712
+e7_b = (sum $ funkyMap (\c -> if c == 'e' then 1 else 0) ord (poem >>= id)) == 16805
+
+-- e8
+-- \a -> a :: t -> t
+
+-- e9
+-- [undefined] :: [t]
+
+-- e10
+-- (True, (False)) ::
+
+-- e11
+-- f :: t1 -> t -> (t, t1)
+
+-- e12
+-- foldr id :: b -> [b -> b] -> b
+
+-- e13
+-- flip foldr const
+--   :: (a -> (a1 -> b -> a1) -> a1 -> b -> a1) -> [a] -> a1 -> b -> a1
+
+-- e14
+dup a = (a, a)
+-- :t dup . dup . dup
+-- dup . dup . dup :: a -> (((a, a), (a, a)), ((a, a), (a, a)))
+
+-- e15
+h g f = (f . g) $ f
+-- h :: ((b -> c) -> b) -> (b -> c) -> c
+
+-- e16
+fix = h fix
+
+-- e18
+f :: (Integer -> Integer) -> Integer -> Integer
+f = \f n -> if (n == 0) then 1 else n * f (n - 1)
+
+-- e19
+k :: Integer -> Integer
+k = fix $ f
+e19 = 1405006117752879898543142606244511569936384000000000 == (k 42)
