@@ -192,3 +192,27 @@ occurs7 m (Node l n r)
   | m < n = occurs7 m r
   | otherwise = occurs7 m l
 -}
+
+
+-- e5
+data T = L Integer | N T T deriving Show
+
+balanaced :: T -> Bool
+leaves (L _) = 1
+leaves (N l r) = leaves l + leaves r
+balanaced (L _) = True
+balanaced (N l r)
+  = abs (leaves l - leaves r) <= 1 && balanaced l && balanaced r
+
+e5_balanced = N (N (L 1) (L 3)) (N (L 2) (L 4))
+e5_unbalanced = N (N (L 1) (L 3)) (N (L 2) (N (N (L 4) (L 6)) (L 5)))
+
+-- e6
+balance :: [Integer] -> T
+halve xs = splitAt (length xs `div` 2) xs
+balance [x] = L x
+balance xs = N (balance ys) (balance zs)
+  where (ys, zs) = halve xs
+
+-- e7
+data Expr = Add Expr Expr | Val Int deriving Show
