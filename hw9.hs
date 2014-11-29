@@ -122,3 +122,73 @@ mult m (Succ n) = add0 m (mult m n)
 e3 = natToInteger0 (mult one three) == natToInteger0 one * natToInteger0 three
 
 
+-- e4
+data Tree = Leaf Integer | Node Tree Integer Tree deriving Show
+
+binary_tree_example = Node (Node (Leaf 1) 3 (Node (Leaf 4) 6 (Leaf 7))) 8 (Node (Leaf 9) 10 (Node (Leaf 13) 14 (Leaf 15)))
+
+occurs0 :: Integer -> Tree -> Bool
+occurs0 m (Leaf n) = m == n
+occurs0 m (Node l n r)
+  = case compare m n of
+      LT -> occurs0 m l
+      EQ -> True
+      GT -> occurs0 m r
+
+occurs1 :: Integer -> Tree -> Bool
+occurs1 m (Leaf n) = m == n
+occurs1 m (Node l n r)
+  = case compare m n of
+      LT -> occurs1 m r
+      EQ -> True
+      GT -> occurs1 m l
+
+{- Fails with type mismatch
+occurs2 :: Integer -> Tree -> Bool
+occurs2 m (Leaf n) = compare m n
+occurs2 m (Node l n r)
+  = case compare m n of
+      LT -> occurs2 m l
+      EQ -> True
+      GT -> occurs2 m r
+-}
+
+occurs3 :: Integer -> Tree -> Bool
+occurs3 m (Leaf n) = m == n
+occurs3 m (Node l n r)
+  = case compare m n of
+      LT -> occurs3 m l
+      EQ -> False
+      GT -> occurs3 m r
+
+occurs4 :: Integer -> Tree -> Bool
+occurs4 m (Leaf n) = m == n
+occurs4 m (Node l n r)
+  | m == n = True
+  | m < n = occurs4 m l
+  | otherwise = occurs4 m r
+
+occurs5 :: Integer -> Tree -> Bool
+occurs5 m (Leaf n) = m == n
+occurs5 m (Node l n r)
+  | m == n = True
+  | m > n = occurs5 m l
+  | otherwise = occurs5 m r
+
+{- Type mismatch
+occurs6 :: Integer -> Tree -> Bool
+occurs6 m n = m == n
+occurs6 m (Node l n r)
+  | m == n = True
+  | m < n = occurs6 m l
+  | otherwise = occurs6 m r
+-}
+
+{- Type mismatch
+occurs7 :: Integer -> Tree -> Bool
+occurs7 m n = m == n
+occurs7 m (Node l n r)
+  | m == n = False
+  | m < n = occurs7 m r
+  | otherwise = occurs7 m l
+-}
