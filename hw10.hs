@@ -34,7 +34,6 @@ eval (App o l r)              =  [apply o x y | x <- eval l
                                               , valid o x y]
 
 -- Combinatorial functions
--- -----------------------
 
 subs                          :: [a] -> [[a]]
 subs []                       =  [[]]
@@ -50,7 +49,7 @@ perms []                      =  [[]]
 perms (x:xs)                  =  concat (map (interleave x) (perms xs))
 
 choices                       :: [a] -> [[a]]
-choices                       =  undefined
+choices                       =  [zs | ys <- subs xs, zs <- perms ys]
 
 -- Formalising the problem
 -- -----------------------
@@ -180,7 +179,7 @@ display es                    =  do t0 <- getCPUTime
 
 main                          :: IO ()
 main                          =  do hSetBuffering stdout NoBuffering
-				      putStrLn "\nCOUNTDOWN NUMBERS GAME SOLVER"
+                                    putStrLn "\nCOUNTDOWN NUMBERS GAME SOLVER"
                                     putStrLn "-----------------------------\n"
                                     putStr "Enter the given numbers : "
                                     ns <- readLn

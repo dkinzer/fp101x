@@ -182,7 +182,7 @@ Interactive version for testing
 > 
 > main                          :: IO ()
 > main                          =  do hSetBuffering stdout NoBuffering
->				      putStrLn "\nCOUNTDOWN NUMBERS GAME SOLVER"
+>				                              putStrLn "\nCOUNTDOWN NUMBERS GAME SOLVER"
 >                                     putStrLn "-----------------------------\n"
 >                                     putStr "Enter the given numbers : "
 >                                     ns <- readLn
