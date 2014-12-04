@@ -48,8 +48,9 @@ perms                         :: [a] -> [[a]]
 perms []                      =  [[]]
 perms (x:xs)                  =  concat (map (interleave x) (perms xs))
 
+-- e0
 choices                       :: [a] -> [[a]]
-choices                       =  [zs | ys <- subs xs, zs <- perms ys]
+choices xs  =  [zs | ys <- subs xs, zs <- perms ys]
 
 -- Formalising the problem
 -- -----------------------
@@ -60,8 +61,11 @@ solution e ns n               =  elem (values e) (choices ns) && eval e == [n]
 -- Brute force solution
 -- ---------------------
 
+-- e3
 split                         :: [a] -> [([a],[a])]
-split                         =  undefined
+split [] = []
+split [_] = []
+split (x : xs) = ([x], xs) : [(x : ls , rs) | (ls, rs) <- split xs]
 
 exprs                         :: [Int] -> [Expr]
 exprs []                      =  []
@@ -186,3 +190,16 @@ main                          =  do hSetBuffering stdout NoBuffering
                                     putStr "Enter the target number : "
                                     n  <- readLn
                                     display (solutions'' ns n)
+
+-- e1
+removeone :: Eq a => a -> [a] -> [a]
+removeone x [] = []
+removeone x (y : ys)
+  | x == y = ys
+  | otherwise = y : removeone x ys
+
+-- e2
+isChoice :: Eq a => [a] -> [a] -> Bool
+isChoice [] _ = True
+isChoice (x : xs) [] = False
+isChoice (x : xs) ys = elem x ys && isChoice (removeone x xs) ys
