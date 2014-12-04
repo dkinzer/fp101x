@@ -28,7 +28,7 @@ int
 -- e7
 comment :: Parser ()
 comment = do string "--"
-             many (sat (/= 'n'))
+             many (sat (/= '\n'))
              return ()
 
 -- e8
