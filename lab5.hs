@@ -34,13 +34,18 @@ stop = Concurrent (\x -> Stop)
 -- Ex. 2
 -- ===================================
 atom' :: IO a -> ((a -> Action) -> Action)
-atom' a = return (a >>= (\x -> (Atom a)))
+--atom' a f = Atom (a >>= \x -> return (f x))
+--atom' a = (a >>= \x -> ((\c -> Atom x) 
+atom' a = a >>= (\x -> x)
+--atom' = error "implent atom"
+
 
 atom :: IO a -> Concurrent a
 -- Atom (IO Action)
 --atom :: IO a -> Concurrent ((a -> Action) -> Action)
 --atom a = a >>= (\x -> (Atom x))
-atom = error "implent atom"
+--atom a = a >>= (\x -> x)
+atom = error "implement atom"
 
 
 -- ===================================
