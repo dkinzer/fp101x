@@ -4,7 +4,7 @@ import Control.Monad
 
 data Concurrent a = Concurrent ((a -> Action) -> Action)
 
-data Action 
+data Action
     = Atom (IO Action)
     | Fork Action Action
     | Stop
@@ -34,9 +34,11 @@ stop = Concurrent (\x -> Stop)
 -- Ex. 2
 -- ===================================
 atom' :: IO a -> ((a -> Action) -> Action)
---atom' a f = Atom (a >>= \x -> return (f x))
---atom' a = (a >>= \x -> ((\c -> Atom x) 
-atom' a = a >>= (\x -> x)
+atom' a f = Atom (a >>= \x -> return (f x))
+--atom' a = a >>= \x -> (\c -> Atom c)
+--atom' a = a >>= (\x -> x)
+--atom' a = (Atom a) >>= (\x -> return x)
+--atom' a = ( \x -> (>>= Atom a ))
 --atom' = error "implent atom"
 
 
@@ -45,7 +47,9 @@ atom :: IO a -> Concurrent a
 --atom :: IO a -> Concurrent ((a -> Action) -> Action)
 --atom a = a >>= (\x -> (Atom x))
 --atom a = a >>= (\x -> x)
-atom = error "implement atom"
+--atom = error "implement atom"
+atom a = Concurrent x
+  where x f = Atom (a >>= \x -> return (f x))
 
 
 -- ===================================
@@ -84,7 +88,7 @@ ex0 = par (loop (genRandom 1337)) (loop (genRandom 2600) >> atom (putStrLn ""))
 
 ex1 :: Concurrent ()
 ex1 = do atom (putStr "Haskell")
-         fork (loop $ genRandom 7331) 
+         fork (loop $ genRandom 7331)
          loop $ genRandom 42
          atom (putStrLn "")
 
