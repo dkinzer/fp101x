@@ -48,13 +48,16 @@ atom a = Concurrent f
 -- ===================================
 
 fork :: Concurrent a -> Concurrent ()
-fork a = Concurrent f
-  where f c = Fork (action a) (c ())
+fork (Concurrent f) = Concurrent f
+  where
+    f c = Fork (action (Concurrent f)) (c ())
 
 par :: Concurrent a -> Concurrent a -> Concurrent a
 par a b = Concurrent f
   where
-    f c = Fork (action a) (action b)
+    f1 = fork a
+    f2 = fork b
+    f c = Fork (action f1) (action f2)
 
 e1 = do fork (atom $ putStrLn "test")
         atom $ putStrLn "hello"
