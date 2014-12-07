@@ -27,9 +27,8 @@ action (Concurrent f) = f (\x -> Stop)
 -- ===================================
 
 stop :: Concurrent a
----((a -> Action) -> Action)
-stop = Concurrent cont
-  where cont x  =  Stop
+stop = Concurrent f
+  where f c  =  Stop
 
 
 -- ===================================
