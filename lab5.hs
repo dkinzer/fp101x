@@ -54,10 +54,12 @@ fork (Concurrent f) = Concurrent f
 
 par :: Concurrent a -> Concurrent a -> Concurrent a
 par a b = Concurrent f
+  {-where-}
+    {-fa = fork a-}
+    {-fb = fork b-}
+    {-f c = Fork (action fa) (action fb)-}
   where
-    f1 = fork a
-    f2 = fork b
-    f c = Fork (action f1) (action f2)
+    f c = Fork (action a) (action b)
 
 e1 = do fork (atom $ putStrLn "test")
         atom $ putStrLn "hello"
