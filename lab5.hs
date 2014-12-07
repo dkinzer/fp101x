@@ -35,12 +35,12 @@ stop = Concurrent f
 -- Ex. 2
 -- ===================================
 atom' :: IO a -> ((a -> Action) -> Action)
-atom' a f = Atom (a >>= \x -> return (f x))
+atom' a c = Atom (a >>= \x -> return (c x))
 
 
 atom :: IO a -> Concurrent a
-atom a = Concurrent cont
-  where cont f = Atom (a >>= \x -> return (f x))
+atom a = Concurrent f
+  where f c = Atom (a >>= \x -> return (c x))
 
 
 -- ===================================
@@ -48,12 +48,19 @@ atom a = Concurrent cont
 -- ===================================
 
 fork :: Concurrent a -> Concurrent ()
-fork (Concurrent a) = error "fork"
+fork a = Concurrent f
+  where f c = Fork (action a) (c ())
 
 par :: Concurrent a -> Concurrent a -> Concurrent a
---par a b = Fork (action a) (action b)
-par = error "par"
+par a b = Concurrent f
+  where
+    f c = Fork (action a) (action b)
 
+e1 = do fork (atom $ putStrLn "test")
+        atom $ putStrLn "hello"
+
+e2 = do val <- par (atom $ return "hi") (atom $ return "hello")
+        atom $ putStrLn val
 
 -- ===================================
 -- Ex. 4
