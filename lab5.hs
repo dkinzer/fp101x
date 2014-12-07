@@ -27,7 +27,9 @@ action (Concurrent f) = f (\x -> Stop)
 -- ===================================
 
 stop :: Concurrent a
-stop = Concurrent (\x -> Stop)
+---((a -> Action) -> Action)
+stop = Concurrent cont
+  where cont x  =  Stop
 
 
 -- ===================================
@@ -35,21 +37,11 @@ stop = Concurrent (\x -> Stop)
 -- ===================================
 atom' :: IO a -> ((a -> Action) -> Action)
 atom' a f = Atom (a >>= \x -> return (f x))
---atom' a = a >>= \x -> (\c -> Atom c)
---atom' a = a >>= (\x -> x)
---atom' a = (Atom a) >>= (\x -> return x)
---atom' a = ( \x -> (>>= Atom a ))
---atom' = error "implent atom"
 
 
 atom :: IO a -> Concurrent a
--- Atom (IO Action)
---atom :: IO a -> Concurrent ((a -> Action) -> Action)
---atom a = a >>= (\x -> (Atom x))
---atom a = a >>= (\x -> x)
---atom = error "implement atom"
-atom a = Concurrent x
-  where x f = Atom (a >>= \x -> return (f x))
+atom a = Concurrent cont
+  where cont f = Atom (a >>= \x -> return (f x))
 
 
 -- ===================================
@@ -57,10 +49,11 @@ atom a = Concurrent x
 -- ===================================
 
 fork :: Concurrent a -> Concurrent ()
-fork = error "You have to implement fork"
+fork (Concurrent a) = error "fork"
 
 par :: Concurrent a -> Concurrent a -> Concurrent a
-par = error "You have to implement par"
+--par a b = Fork (action a) (action b)
+par = error "par"
 
 
 -- ===================================
