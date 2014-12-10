@@ -54,12 +54,12 @@ fork (Concurrent f) = Concurrent f
 
 par :: Concurrent a -> Concurrent a -> Concurrent a
 par a b = Concurrent f
-  {-where-}
-    {-fa = fork a-}
-    {-fb = fork b-}
-    {-f c = Fork (action fa) (action fb)-}
   where
-    f c = Fork (action a) (action b)
+    fa = fork a
+    fb = fork b
+    f c = Fork (action fa) (action fb)
+  {-where-}
+    {-f c = Fork (action a) (action b)-}
 
 e1 = do fork (atom $ putStrLn "test")
         atom $ putStrLn "hello"
@@ -112,4 +112,32 @@ genRandom 42   = [71, 71, 17, 14, 16, 91, 18, 71, 58, 75]
 
 loop :: [Int] -> Concurrent ()
 loop xs = mapM_ (atom . putStr . show) xs
+
+
+
+add_cps :: Int -> Int -> ((Int -> r) -> r)
+add_cps x y = (\k -> k (x + y))
+
+add_cps' :: Int -> Int -> ((Int -> r) -> r)
+add_cps' x y = (\m -> (\l -> (\k -> k (x + y)) l) m)
+
+square_cps :: Int -> ((Int -> r) -> r)
+square_cps x = \k -> k (x * x)
+
+pythagoras_cps :: Int -> Int -> ((Int -> r) -> r)
+pythagoras_cps x y =
+  (\k -> 
+    ((\a b -> b (a * a)) x) (\x_squared ->
+      ((\a b -> b (a * a)) y) (\y_squared ->
+        ((\a b c -> c (a + b)) x_squared y_squared)  k)))
+
+pythagoras_cps' :: Int -> Int -> ((Int -> r) -> r)
+pythagoras_cps' x y =
+  (\k -> 
+    ((\a b c -> c (a + b)) (x * x) (y * y))  k)
+
+pythagoras_cps'' x y =
+    ((\a b -> b (a * a)) x) (\x_squared ->
+      ((\a b -> b (a * a)) y) (\y_squared ->
+         ((\a b c -> c (a + b)) x_squared y_squared)))
 
