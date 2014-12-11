@@ -124,16 +124,17 @@ add_cps' x y = (\m -> (\l -> (\k -> k (x + y)) l) m)
 square_cps :: Int -> ((Int -> r) -> r)
 square_cps x = \k -> k (x * x)
 
+
 pythagoras_cps :: Int -> Int -> ((Int -> r) -> r)
 pythagoras_cps x y =
-  (\k -> 
+  (\k ->
     ((\a b -> b (a * a)) x) (\x_squared ->
       ((\a b -> b (a * a)) y) (\y_squared ->
         ((\a b c -> c (a + b)) x_squared y_squared)  k)))
 
 pythagoras_cps' :: Int -> Int -> ((Int -> r) -> r)
 pythagoras_cps' x y =
-  (\k -> 
+  (\k ->
     ((\a b c -> c (a + b)) (x * x) (y * y))  k)
 
 pythagoras_cps'' x y =
@@ -141,3 +142,15 @@ pythagoras_cps'' x y =
       ((\a b -> b (a * a)) y) (\y_squared ->
          ((\a b c -> c (a + b)) x_squared y_squared)))
 
+pythagoras_cps''' :: Int -> Int -> ((Int -> r) -> r)
+pythagoras_cps''' x y =
+  \k ->
+    (\a b -> b (a * a)) x $ \x_squared ->
+                              (\a b -> b (a * a)) y $ \y_squared ->
+                                                       (\a b c -> c (a + b)) x_squared y_squared k
+
+pythagoras_cps'''' :: Int -> Int -> ((Int -> r) -> r)
+pythagoras_cps'''' x y =
+    (\a b -> b (a * a)) x $ \x_squared ->
+                              (\a b -> b (a * a)) y $ \y_squared ->
+                                                       (\a b c -> c (a + b)) x_squared y_squared
