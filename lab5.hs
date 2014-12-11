@@ -18,6 +18,9 @@ instance Show Action where
 -- Ex. 0
 -- ===================================
 
+action' :: ((a -> Action) -> Action) -> Action
+action' f =  f (\x -> Stop)
+
 action :: Concurrent a -> Action
 action (Concurrent f) = f (\x -> Stop)
 
@@ -25,10 +28,11 @@ action (Concurrent f) = f (\x -> Stop)
 -- ===================================
 -- Ex. 1
 -- ===================================
+stop' :: (a -> Action) -> Action
+stop' = \c -> Stop
 
 stop :: Concurrent a
-stop = Concurrent f
-  where f c  =  Stop
+stop = Concurrent (\c -> Stop)
 
 
 -- ===================================
@@ -37,6 +41,8 @@ stop = Concurrent f
 atom' :: IO a -> ((a -> Action) -> Action)
 atom' a c = Atom (a >>= \x -> return (c x))
 
+--atom'' :: IO a -> ((a -> Action) -> Action)
+--atom'' a c = (a >>= \x -> c) (\io_action -> Atom io_action)
 
 atom :: IO a -> Concurrent a
 atom a = Concurrent f
