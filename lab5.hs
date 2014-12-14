@@ -88,10 +88,18 @@ bind :: ((a -> Action) -> Action) -> (a -> ((b -> Action) -> Action)) -> ((b -> 
 --bind ma f =  (\c -> (f ma) c)
 bind ma f =  (\c -> (ma (\x -> (f x) c)))
 
+bind1 :: Concurrent a -> (a -> ((b -> Action) -> Action)) -> ((b -> Action) -> Action)
+bind1 (Concurrent ma) f =  (\c -> (ma (\x -> (f x) c)))
+
+bind2 :: Concurrent a -> (a -> Concurrent b) -> ((b -> Action) -> Action)
+bind2 (Concurrent ma) f =  (\c -> (ma (\x -> case (f x) of (Concurrent b) -> b c)))
+
+bind3 :: Concurrent a -> (a -> Concurrent b) -> Concurrent b
+bind3 (Concurrent ma) f =  Concurrent (\c -> (ma (\x -> case (f x) of (Concurrent b) -> b c)))
+
 instance Monad Concurrent where
    -- (Concurrent f) >>= g = error "You have to implement >>="
-   --  f >>= g = Concurrent (\c -> (f (\x -> (g x) c)))
-    f >>= g = error "implement"
+    (Concurrent f) >>= g = Concurrent(\c -> (f (\x -> case (g x) of (Concurrent b) -> b c)))
     return x = Concurrent (\c -> c x)
 
 
