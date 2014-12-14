@@ -14,6 +14,7 @@ instance Show Action where
     show (Fork x y) = "fork " ++ show x ++ " " ++ show y
     show Stop = "stop"
 
+
 -- ===================================
 -- Ex. 0
 -- ===================================
@@ -77,9 +78,23 @@ e2 = do val <- par (atom $ return "hi") (atom $ return "hello")
 -- Ex. 4
 -- ===================================
 
+ma :: ((a -> Action) -> Action)
+ma = error "Stub ma."
+
+f :: a -> ((b -> Action) -> Action)
+f = error "Stub f."
+
+bind :: ((a -> Action) -> Action) -> (a -> ((b -> Action) -> Action)) -> ((b -> Action) -> Action)
+--bind ma f =  (\c -> (f ma) c)
+bind ma f =  (\c -> (ma (\x -> (f x) c)))
+
 instance Monad Concurrent where
-    (Concurrent f) >>= g = error "You have to implement >>="
+   -- (Concurrent f) >>= g = error "You have to implement >>="
+   --  f >>= g = Concurrent (\c -> (f (\x -> (g x) c)))
+    f >>= g = error "implement"
     return x = Concurrent (\c -> c x)
+
+
 
 
 -- ===================================
