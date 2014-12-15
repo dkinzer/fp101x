@@ -20,7 +20,7 @@ instance Show Action where
 -- ===================================
 
 action' :: ((a -> Action) -> Action) -> Action
-action' f =  f (\x -> Stop)
+action' f =  f (\k -> ((\x -> Stop) k))
 
 action :: Concurrent a -> Action
 action (Concurrent f) = f (\x -> Stop)
@@ -55,18 +55,18 @@ atom a = Concurrent f
 -- ===================================
 
 fork :: Concurrent a -> Concurrent ()
-fork (Concurrent f) = Concurrent f
+fork a = Concurrent f
   where
-    f c = Fork (action (Concurrent f)) (c ())
+    f c = Fork (action a) (c ())
 
 par :: Concurrent a -> Concurrent a -> Concurrent a
 par a b = Concurrent f
-  where
-    fa = fork a
-    fb = fork b
-    f c = Fork (action fa) (action fb)
   {-where-}
-    {-f c = Fork (action a) (action b)-}
+    {-fa = fork a-}
+    {-fb = fork b-}
+    {-f c = Fork (action fa) (action fb)-}
+  where
+    f c = Fork (action a) (action b)
 
 e1 = do fork (atom $ putStrLn "test")
         atom $ putStrLn "hello"
@@ -110,7 +110,8 @@ instance Monad Concurrent where
 -- ===================================
 
 roundRobin :: [Action] -> IO ()
-roundRobin = error "You have to implement roundRobin"
+--roundRobin [] = return 
+roundRobin = error "implement robin."
 
 -- ===================================
 -- Tests
