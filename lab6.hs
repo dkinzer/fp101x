@@ -43,9 +43,15 @@ ex7 = (*) (leaves . head . children . head . children $ xs) (product . map size 
 -- ===================================
 
 instance Functor Rose where
-  fmap = error "you have to implement fmap for Rose"
+  fmap f (a :> xs) = f a :> map (\x -> fmap f x) xs 
+
+tree8 = 1 :> map (\c -> c :> []) [1..5]
 
 ex10 = round . root . head . children . fmap (\x -> if x > 0.5 then x else 0) $ fmap (\x -> sin(fromIntegral x)) xs
+
+--f9 :: Rose a -> Rose a
+f9 :: Rose a -> Rose a
+f9 r = fmap head $ fmap (\x -> [x]) r
 
 -- ===================================
 -- Ex. 11-13
