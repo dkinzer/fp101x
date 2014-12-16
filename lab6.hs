@@ -9,10 +9,13 @@ data Rose a = a :> [Rose a] deriving Show
 -- ===================================
 
 root :: Rose a -> a 
-root = error "you have to implement root" 
+root (a :> _) = a
 
 children :: Rose a -> [Rose a]
-children = error "you have to implement children"
+children (_ :> c) = c
+
+tree0 = 'x' :> map (flip (:>) []) ['a' ..'x']
+tree1 = 'x' :> map (\c -> c :> []) ['a' .. 'A']
 
 xs = 0 :> [1 :> [2 :> [3 :> [4 :> [], 5 :> []]]], 6 :> [], 7 :> [8 :> [9 :> [10 :> []], 11 :> []], 12 :> [13 :> []]]]
 
@@ -23,10 +26,15 @@ ex2 = root . head . children . head . children . head . drop 2 $ children xs
 -- ===================================
 
 size :: Rose a -> Int
-size = error "you have to implement size"
+size (_ :> []) = 1
+size (_ :> xs) = 1 + (sum (map  size xs))
 
 leaves :: Rose a -> Int
-leaves = error "you have to implement leaves"
+leaves (_ :> []) = 1
+leaves (_ :> xs) = 0 + (sum (map  leaves xs))
+
+tree3 = 1 :> map (\c -> c :> []) [1..5]
+tree6 = 1 :> map (\c -> c :> []) [1..5]
 
 ex7 = (*) (leaves . head . children . head . children $ xs) (product . map size . children . head . drop 2 . children $ xs)
 
