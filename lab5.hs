@@ -61,10 +61,6 @@ fork a = Concurrent f
 
 par :: Concurrent a -> Concurrent a -> Concurrent a
 par a b = Concurrent f
-  {-where-}
-    {-fa = fork a-}
-    {-fb = fork b-}
-    {-f c = Fork (action fa) (action fb)-}
   where
     f c = Fork (action a) (action b)
 
