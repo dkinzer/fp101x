@@ -61,21 +61,25 @@ class Monoid m where
   mempty :: m
   mappend :: m -> m -> m
 
-newtype Sum a = Sum a
-newtype Product a = Product a
+newtype Sum a = Sum a deriving Show
+newtype Product a = Product a deriving Show
 
 instance Num a => Monoid (Sum a) where
-  mempty = error "you have to implement mempty for Sum"
-  mappend = error "you have to implement mappend for Sum"
+  mempty = Sum 0
+  mappend (Sum a) (Sum b) =  Sum (a + b)
   
 instance Num a => Monoid (Product a) where
-  mempty = error "you have to implement mempty for Product"
-  mappend = error "you have to implement mappend for Product"
+  mempty = Product 1 
+  mappend (Product a) (Product b) = Product (a * b)
 
 unSum :: Sum a -> a
-unSum = error "you have to implement unSum"
+unSum (Sum a) = a
+
 unProduct :: Product a -> a
-unProduct = error "you have to implement unProduct"
+unProduct (Product a) = a
+
+ex12 :: Num string => Sum string
+ex12 = Sum 3 `mappend` Sum 4
 
 num1 = mappend (mappend (Sum 2) (mappend (mappend mempty (Sum 1)) mempty)) (mappend (Sum 2) (Sum 1))
   
@@ -91,9 +95,16 @@ class Functor f => Foldable f where
   fold :: Monoid m => f m -> m
   foldMap :: Monoid m => (a -> m) -> (f a -> m)
   foldMap = error "you have to implement foldMap"
+
+foldR :: (a -> b -> b) -> b -> Rose a -> b
+foldR _ z (_ :> []) =  z
+foldR f z (x :> xs) =  f x (foldR f z xs)
   
 instance Foldable Rose where
-  fold = error "you have to implement fold for Rose"
+  fold = foldR (mappend) mempty
+
+instance Foldable [] where
+  fold = foldr (mappend) mempty
   
 sumxs = Sum 0 :> [Sum 13 :> [Sum 26 :> [Sum (-31) :> [Sum (-45) :> [], Sum 23 :> []]]], Sum 27 :> [], Sum 9 :> [Sum 15 :> [Sum 3 :> [Sum (-113) :> []], Sum 1 :> []], Sum 71 :> [Sum 55 :> []]]]
 
