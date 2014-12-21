@@ -96,12 +96,11 @@ class Functor f => Foldable f where
   foldMap :: Monoid m => (a -> m) -> (f a -> m)
   foldMap = error "you have to implement foldMap"
 
-foldR :: (a -> b -> b) -> b -> Rose a -> b
-foldR _ z (_ :> []) =  z
-foldR f z (x :> xs) =  f x (foldR f z xs)
-  
 instance Foldable Rose where
-  fold = foldR (mappend) mempty
+  fold = (foldr (mappend) mempty) . f
+    where f (a :> rs) = [a] ++ g rs
+          g [] = []
+          g (a : rs) = f a ++ g rs
 
 instance Foldable [] where
   fold = foldr (mappend) mempty
@@ -127,4 +126,3 @@ fsum = error "you have to implement fsum"
 fproduct = error "you have to implement fproduct"
 
 ex21 = ((fsum . head . drop 1 . children $ xs) + (fproduct . head . children . head . children . head . drop 2 . children $ xs)) - (fsum . head . children . head . children $ xs)
-
