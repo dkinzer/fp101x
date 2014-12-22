@@ -106,8 +106,12 @@ instance Monad Concurrent where
 -- ===================================
 
 roundRobin :: [Action] -> IO ()
---roundRobin [] = return 
-roundRobin = error "implement robin."
+roundRobin [] = return ()
+roundRobin (a : as) = case a of
+  Atom a -> do next <- a
+               roundRobin (as ++ [next])
+  Fork a b -> roundRobin (a : b : as) 
+  Stop -> roundRobin as
 
 -- ===================================
 -- Tests
@@ -122,7 +126,19 @@ ex1 = do atom (putStr "Haskell")
          loop $ genRandom 42
          atom (putStrLn "")
 
+myex0 = run $ (ho >> ho >> ho) >>
+              (hi >> hi >> hi) >> atom (putStr "\n")
+                 where ho = atom (putStr "ho")
+                       hi = atom (putStr "hi")
 
+myex1 = run $ fork (ho >> ho >> ho) >>
+                   (hi >> hi >> hi) >> atom (putStr "\n")
+                     where ho = atom (putStr "ho")
+                           hi = atom (putStr "hi")
+
+myex2 = run $ fork (put3 "ba") >> fork (put3 "di") >>
+        put3 "bu" >> atom (putStr "\n")
+          where put3 = sequence . take 3 . repeat . atom . putStr
 -- ===================================
 -- Helper Functions
 -- ===================================
