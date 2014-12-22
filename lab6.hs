@@ -94,7 +94,7 @@ ex13 = unSum (mappend (Sum 5) (Sum (unProduct (mappend (Product (unSum num2)) (m
 class Functor f => Foldable f where
   fold :: Monoid m => f m -> m
   foldMap :: Monoid m => (a -> m) -> (f a -> m)
-  foldMap = error "you have to implement foldMap"
+  foldMap f c = fold $ fmap f c
 
 instance Foldable Rose where
   fold = (foldr (mappend) mempty) . f
