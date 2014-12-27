@@ -98,7 +98,7 @@ class Functor f => Foldable f where
 
 instance Foldable Rose where
   fold = (foldr (mappend) mempty) . f
-    where f (a :> rs) = [a] ++ g rs
+    where f (a :> rs) = a : g rs
           g [] = []
           g (a : rs) = f a ++ g rs
 
